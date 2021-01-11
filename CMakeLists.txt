@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(dbscan_znp_realvec_len)
+project(dbscan_zpn_realvec_len)
 
 find_package(Boost REQUIRED COMPONENTS iostreams)
 
@@ -12,6 +12,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 link_directories(${Boost_LIBRARY_DIR})
 
-add_executable(dbscan_znp_realvec_len ${SOURCES})
-target_include_directories(dbscan_znp_realvec_len PUBLIC "include/" ${Boost_INCLUDE_DIRS})
-target_link_libraries(dbscan_znp_realvec_len PUBLIC ${Boost_LIBRARIES})
+add_executable(dbscan_zpn_realvec_len ${SOURCES})
+target_include_directories(dbscan_zpn_realvec_len PUBLIC "include/" ${Boost_INCLUDE_DIRS})
+target_link_libraries(dbscan_zpn_realvec_len PUBLIC ${Boost_LIBRARIES})

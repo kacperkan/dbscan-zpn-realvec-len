@@ -1,17 +1,12 @@
-import matplotlib
-
-matplotlib.use("Agg")
-
 import logging
 from pathlib import Path
+from typing import Tuple
 
 import click
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn import metrics
 from sklearn.cluster import DBSCAN
 from sklearn.datasets import make_blobs
-from sklearn.preprocessing import StandardScaler
 
 
 def to_arff(data: np.ndarray, labels: np.ndarray) -> str:
@@ -32,18 +27,27 @@ def to_arff(data: np.ndarray, labels: np.ndarray) -> str:
     return "\n".join(lines)
 
 
-def produce(out: str):
-    # Generate sample data
-    out_path = Path(out)
+def get_even_simpler_dataset() -> Tuple[np.ndarray, np.ndarray]:
+    left_points, right_points = [], []
+    num_samples = 20
+    y_coords = np.linspace(-1, 1, num=num_samples // 2)
+    labels = [0] * (num_samples // 2) + [1] * (num_samples // 2)
+    for i in range(num_samples // 2):
+        left_points.append((-1.0, y_coords[i]))
+        right_points.append((1.0, y_coords[i]))
 
-    centers = [[1, 1], [-1, -1], [1, -1]]
-    X, labels_true = make_blobs(
-        n_samples=750, centers=centers, cluster_std=0.4, random_state=0
+    return (
+        np.concatenate(
+            (np.array(left_points), np.array(right_points)), axis=0
+        ),
+        np.array(labels),
     )
 
-    X = StandardScaler().fit_transform(X)
 
-    db = DBSCAN(eps=0.3, min_samples=10).fit(X)
+def evaluate(
+    X: np.ndarray, labels_true: np.ndarray, out_path: Path, min_samples=10
+):
+    db = DBSCAN(eps=0.3, min_samples=min_samples).fit(X)
     core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
     core_samples_mask[db.core_sample_indices_] = True
     labels = db.labels_
@@ -59,29 +63,10 @@ def produce(out: str):
 
     logger.info("Estimated number of clusters: %d" % n_clusters_)
     logger.info("Estimated number of noise points: %d" % n_noise_)
-    logger.info(
-        "Homogeneity: %0.3f" % metrics.homogeneity_score(labels_true, labels)
-    )
-    logger.info(
-        "Completeness: %0.3f" % metrics.completeness_score(labels_true, labels)
-    )
-    logger.info(
-        "V-measure: %0.3f" % metrics.v_measure_score(labels_true, labels)
-    )
-    logger.info(
-        "Adjusted Rand Index: %0.3f"
-        % metrics.adjusted_rand_score(labels_true, labels)
-    )
-    logger.info(
-        "Adjusted Mutual Information: %0.3f"
-        % metrics.adjusted_mutual_info_score(labels_true, labels)
-    )
-    logger.info(
-        "Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels)
-    )
 
     # Black removed and is used for noise instead.
     unique_labels = set(labels)
+    plt.figure()
     colors = [
         plt.cm.Spectral(each) for each in np.linspace(0, 1, len(unique_labels))
     ]
@@ -103,9 +88,33 @@ def produce(out: str):
 
     plt.title("Estimated number of clusters: %d" % n_clusters_)
     plt.savefig(out_path / "plot.png")
+    plt.close()
+
+
+def produce(out: str):
+    plt.switch_backend("agg")
+    # Generate sample data
+    out_path = Path(out)
+    out_path.mkdir(parents=True, exist_ok=True)
+
+    centers = [[1, 1], [-1, -1], [1, -1]]
+    X, labels_true = make_blobs(
+        n_samples=750, centers=centers, cluster_std=0.4, random_state=0
+    )
+
+    evaluate(X, labels_true, out_path)
 
     with open(out_path / "data.arff", "w") as f:
-        f.write(to_arff(X, labels))
+        f.write(to_arff(X, labels_true))
+
+    simpler_path = out_path.parent / (out_path.name + "_simpler")
+    simpler_path.mkdir(parents=True, exist_ok=True)
+
+    X, labels_true = get_even_simpler_dataset()
+
+    evaluate(X, labels_true, simpler_path, min_samples=1)
+    with open(simpler_path / "data.arff", "w") as f:
+        f.write(to_arff(X, labels_true))
 
 
 @click.command()

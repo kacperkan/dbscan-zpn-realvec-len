@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./dbscan_znp_realvec_len $@
+./dbscan_zpn_realvec_len $@

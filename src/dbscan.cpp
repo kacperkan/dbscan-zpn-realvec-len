@@ -83,13 +83,13 @@ AbstractDBSCAN& AbstractDBSCAN::fit(Dataset& dataset) {
             }
 
             if (m_data_points[proper_seed].label != UNDEFINED_LABEL) {
-                m_data_points[proper_seed].cluster_assignments.emplace(
-                    current_cluster_id);
+                if (!m_data_points[proper_seed].is_core_point) {
+                    m_data_points[proper_seed].cluster_assignments.emplace(
+                        current_cluster_id);
+                }
                 continue;
             }
             m_data_points[proper_seed].label = current_cluster_id;
-            m_data_points[proper_seed].cluster_assignments.emplace(
-                current_cluster_id);
 
             std::deque<int> new_neighbours;
             get_neighbours(m_data_points, seed, sorted_indices,
@@ -97,11 +97,17 @@ AbstractDBSCAN& AbstractDBSCAN::fit(Dataset& dataset) {
             if (new_neighbours.size() >= min_pts()) {
                 m_data_points[proper_seed].is_core_point = true;
                 m_data_points[proper_seed].is_border_point = false;
+                m_data_points[proper_seed].cluster_assignments.clear();
+                m_data_points[proper_seed].cluster_assignments.emplace(
+                    current_cluster_id);
+
                 neighbours.insert(neighbours.end(), new_neighbours.begin(),
                                   new_neighbours.end());
             } else {
                 m_data_points[proper_seed].is_border_point = true;
                 m_data_points[proper_seed].is_core_point = false;
+                m_data_points[proper_seed].cluster_assignments.emplace(
+                    current_cluster_id);
             }
         }
     }
