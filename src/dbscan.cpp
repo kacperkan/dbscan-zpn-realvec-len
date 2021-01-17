@@ -76,6 +76,8 @@ AbstractDBSCAN& AbstractDBSCAN::fit(Dataset& dataset) {
             neighbours.pop_front();
             if (m_data_points[proper_seed].label == NOISE_LABEL) {
                 m_data_points[proper_seed].label = current_cluster_id;
+                m_data_points[proper_seed].is_border_point = true;
+                m_data_points[proper_seed].is_core_point = false;
                 m_data_points[proper_seed].cluster_assignments.erase(
                     NOISE_LABEL);
                 m_data_points[proper_seed].cluster_assignments.emplace(
