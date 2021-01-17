@@ -139,41 +139,6 @@ for eps in ${epsilons[@]}; do
     done
 done
 
-# Cluto: eps = 0.99; min_pts = 100
-# Complex: eps= 0.99; min_pts = 100
-# Letter: eps = 0.99; min_pts = 25
-final_cluto="./dbscan_zpn_realvec_len \
-    data/cluto-t7-10k/data.arff \
-    final_cluto \
-    --eps 0.99 \
-    --min_pts 100 \
-    --has_labels \
-    --algorithm_name base \
-    --prefiltering_name none
-"
-final_complex="./dbscan_zpn_realvec_len \
-    data/complex9/data.arff \
-    final_complex9 \
-    --eps 0.99 \
-    --min_pts 100 \
-    --has_labels \
-    --algorithm_name base \
-    --prefiltering_name none
-"
-final_letter="./dbscan_zpn_realvec_len \
-    data/letter/data.arff \
-    final_letter \
-    --eps 0.99 \
-    --min_pts 25 \
-    --has_labels \
-    --algorithm_name base \
-    --prefiltering_name none
-"
-
-eval ${final_cluto}
-eval ${final_complex}
-eval ${final_letter}
-
 jupyter nbconvert python/analysis.ipynb --to html --no-input --no-prompt --output-dir experiments/ --execute
 
 echo "Report can be found in experiments/analysis.html"
