@@ -272,7 +272,7 @@ void RealVecLenFilterer::prefilter_possible_neighbours(
             if (is_in_bounds(points[proper_index], lower_bound, upper_bound)) {
                 prefiltered_indices_of_sorted_indices.push_back(down_index);
             } else {
-                stop_going_down = false;
+                stop_going_down = true;
             }
             down_index--;
         }
@@ -319,7 +319,7 @@ void ZPNVecLenFilterer::prefilter_possible_neighbours(
             if (is_in_bounds(points[proper_index], lower_bound, upper_bound)) {
                 prefiltered_indices_of_sorted_indices.push_back(down_index);
             } else {
-                stop_going_down = false;
+                stop_going_down = true;
             }
             down_index--;
         }
