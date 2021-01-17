@@ -78,6 +78,7 @@ AbstractDBSCAN& AbstractDBSCAN::fit(Dataset& dataset) {
                 m_data_points[proper_seed].label = current_cluster_id;
                 m_data_points[proper_seed].is_border_point = true;
                 m_data_points[proper_seed].is_core_point = false;
+                m_data_points[proper_seed].is_noise_point = false;
                 m_data_points[proper_seed].cluster_assignments.erase(
                     NOISE_LABEL);
                 m_data_points[proper_seed].cluster_assignments.emplace(
@@ -99,6 +100,7 @@ AbstractDBSCAN& AbstractDBSCAN::fit(Dataset& dataset) {
             if (new_neighbours.size() >= min_pts()) {
                 m_data_points[proper_seed].is_core_point = true;
                 m_data_points[proper_seed].is_border_point = false;
+                m_data_points[proper_seed].is_noise_point = false;
                 m_data_points[proper_seed].cluster_assignments.clear();
                 m_data_points[proper_seed].cluster_assignments.emplace(
                     current_cluster_id);
