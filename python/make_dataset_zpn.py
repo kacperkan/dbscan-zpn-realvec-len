@@ -36,7 +36,6 @@ class Parser:
     def parse_lines(self, path: str, has_labels: bool):
         self.get_mean_std(path, has_labels)
         assert self.mean is not None and self.std is not None
->>>>>>> f6866d97359aa8b172fcf25ba9f824fc356f3241
         new_lines = []
 
         with open(path, "r") as f:
