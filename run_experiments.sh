@@ -141,4 +141,89 @@ done
 
 jupyter nbconvert python/analysis.ipynb --to html --no-input --no-prompt --output-dir experiments/ --execute
 
+for eps in ${epsilons[@]}; do
+    for dataset in ${datasets[@]}; do
+        base="${dataset}_${eps}_${min_pts}_tanimoto_0"
+        if [ ! -d "experiments/${base}_none_realdata" ]; then
+            echo "Running: ${base}_none_realdata"
+            echo "No prefiltering ..."
+
+            command_none="./dbscan_zpn_realvec_len data/${dataset}/data.arff \
+                ${base}_none_realdata \
+                --has_labels \
+                --eps ${eps} \
+                --min_pts ${min_pts} \
+                --algorithm_name ${algorithm_name} \
+                --prefiltering_name none"
+            eval ${command_none}
+        else
+            echo  "Omitting: ${base}_none_realdata"
+        fi
+
+        if [ ! -d "experiments/${base}_real_realdata" ]; then
+            command_real="./dbscan_zpn_realvec_len data/${dataset}/data.arff \
+                ${base}_real_realdata \
+                --has_labels \
+                --eps ${eps} \
+                --min_pts ${min_pts} \
+                --algorithm_name ${algorithm_name} \
+                --prefiltering_name realveclen"
+            echo "Real ..."
+            eval ${command_real}
+        else
+            echo  "Omitting: ${base}_real_realdata"
+        fi
+    done
+done
+
+for eps in ${epsilons[@]}; do
+    for dataset in ${datasets[@]}; do
+        base="${dataset}_${eps}_${min_pts}_tanimoto_0"
+        if [ ! -d "experiments/${base}_none_zpndata" ]; then
+            echo "Running: ${base}"
+            echo "No prefiltering ..."
+
+            command_none="./dbscan_zpn_realvec_len data/${dataset}/data_zpn.arff \
+                ${base}_none_zpndata \
+                --has_labels \
+                --eps ${eps} \
+                --min_pts ${min_pts} \
+                --algorithm_name ${algorithm_name} \
+                --prefiltering_name none"
+            eval ${command_none}
+        else
+            echo  "Omitting: ${base}_none_zpndata"
+        fi
+
+        if [ ! -d "experiments/${base}_real_zpndata" ]; then
+            command_real="./dbscan_zpn_realvec_len data/${dataset}/data_zpn.arff \
+                ${base}_real_zpndata \
+                --has_labels \
+                --eps ${eps} \
+                --min_pts ${min_pts} \
+                --algorithm_name ${algorithm_name} \
+                --prefiltering_name realveclen"
+            echo "Real ..."
+            eval ${command_real}
+        else
+            echo  "Omitting: ${base}_real_zpndata"
+        fi
+
+        if [ ! -d "experiments/${base}_zpn_zpndata" ]; then
+            command_zpn="./dbscan_zpn_realvec_len data/${dataset}/data_zpn.arff \
+                ${base}_zpn_zpndata \
+                --has_labels \
+                --eps ${eps} \
+                --min_pts ${min_pts} \
+                --algorithm_name ${algorithm_name} \
+                --prefiltering_name zpnveclen"
+
+            echo "ZPN ..."
+            eval ${command_zpn}
+        else
+            echo  "Omitting: ${base}_zpn_zpndata"
+        fi 
+    done
+done
+
 echo "Report can be found in experiments/analysis.html"
