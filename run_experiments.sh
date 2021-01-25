@@ -140,6 +140,7 @@ for eps in ${epsilons[@]}; do
 done
 
 
+min_pts=5
 for eps in ${epsilons[@]}; do
     for dataset in ${datasets[@]}; do
         base="${dataset}_${eps}_${min_pts}_tanimoto_0"
