@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <numeric>
 
+#include "utils.hpp"
+
 namespace dbscan {
 
 // General
@@ -47,9 +49,12 @@ AbstractDBSCAN& AbstractDBSCAN::fit(Dataset& dataset) {
     convert_to_dbscan_points(dataset);
 
     std::vector<int> sorted_indices;
+    TimeStats::get_instance().tick("sorting");
     sort_points(m_data_points, sorted_indices);
+    TimeStats::get_instance().tock();
 
     int i;
+    TimeStats::get_instance().tick("clustering");
     for (int index = 0; index < m_data_points.size(); ++index) {
         i = sorted_indices[index];
         if (m_data_points[i].label != UNDEFINED_LABEL) {
@@ -115,6 +120,7 @@ AbstractDBSCAN& AbstractDBSCAN::fit(Dataset& dataset) {
             }
         }
     }
+    TimeStats::get_instance().tock();
 
     convert_points_to_labels(m_data_points);
     m_num_data = m_data_points.size();

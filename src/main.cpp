@@ -95,9 +95,7 @@ int main(int argc, char** argv) {
     std::vector<int> point_types;
     std::vector<std::unordered_set<int>> cluster_assignments;
 
-    dbscan::TimeStats::get_instance().tick("model_fitting");
     algorithm->fit_predict(dataset, labels, point_types, cluster_assignments);
-    dbscan::TimeStats::get_instance().tock();
 
     std::set<int> labels_set(labels.begin(), labels.end());
 

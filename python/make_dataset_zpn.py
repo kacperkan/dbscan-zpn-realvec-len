@@ -1,18 +1,41 @@
 import argparse
-from typing import List
+from typing import List, Optional
 
+import numpy as np
 from functional import seq
 
 
 class Parser:
-    def __init__(self, thresholds: List[float], labels: List[int]) -> None:
+    def __init__(self):
         super().__init__()
-
-        self.thresholds = thresholds
-        self.labels = labels
         self.lines: List[str] = []
+        self.mean: Optional[np.ndarray] = None
+        self.std: Optional[np.ndarray] = None
+
+    def get_mean_std(self, path: str, has_labels: bool):
+        with open(path, "r") as f:
+            lines = seq(f.read().split("\n")).map(str.strip).list()
+
+        total_feats = []
+        for line in lines:
+            if line.startswith("@") or line.startswith("%") or len(line) == 0:
+                continue
+            comps = line.split(",")
+            data_slice = slice(0, len(comps) - 1 if has_labels else len(comps))
+            new_features = []
+            for feat in comps[data_slice]:
+                feat_num = float(feat)
+                new_features.append(feat_num)
+
+            total_feats.append(new_features)
+
+        data = np.array(total_feats)
+        self.mean = np.mean(data, axis=0)
+        self.std = np.std(data, axis=0)
 
     def parse_lines(self, path: str, has_labels: bool):
+        self.get_mean_std(path, has_labels)
+        assert self.mean is not None and self.std is not None
         new_lines = []
 
         with open(path, "r") as f:
@@ -27,14 +50,18 @@ class Parser:
                     0, len(comps) - 1 if has_labels else len(comps)
                 )
                 new_features = []
-                for feat in comps[data_slice]:
+                for feat_index, feat in enumerate(comps[data_slice]):
                     feat_num = float(feat)
-                    if feat_num < self.thresholds[0]:
-                        new_feat_num = str(float(self.labels[0]))
-                    elif self.thresholds[0] <= feat_num < self.thresholds[1]:
-                        new_feat_num = str(float(self.labels[1]))
+                    min_bound, max_bound = (
+                        self.mean[feat_index] - self.std[feat_index] / 2,
+                        self.mean[feat_index] + self.std[feat_index],
+                    )
+                    if feat_num <= (min_bound):
+                        new_feat_num = "-1.0"
+                    elif min_bound < feat_num <= max_bound:
+                        new_feat_num = "0.0"
                     else:
-                        new_feat_num = str(float(self.labels[2]))
+                        new_feat_num = "1.0"
                     new_features.append(new_feat_num)
 
                 comps[data_slice] = new_features
@@ -46,14 +73,8 @@ class Parser:
             f.write("\n".join(self.lines))
 
 
-def convert_dataset(
-    input_path: str,
-    output_path: str,
-    thresholds: List[float],
-    labels: List[int],
-    has_labels: bool,
-):
-    data_parser = Parser(thresholds, labels)
+def convert_dataset(input_path: str, output_path: str, has_labels: bool):
+    data_parser = Parser()
     data_parser.parse_lines(input_path, has_labels)
     data_parser.output_to_file(output_path)
 
@@ -62,23 +83,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("dataset_path")
     parser.add_argument("output_path")
-    parser.add_argument(
-        "--thresholds", nargs=2, help="Splits of the data", type=float
-    )
-    parser.add_argument(
-        "--labels", nargs=3, help="Labels for each of the split", type=int
-    )
     parser.add_argument("--has_labels", action="store_true")
 
     args = parser.parse_args()
 
-    convert_dataset(
-        args.dataset_path,
-        args.output_path,
-        list(args.thresholds),
-        list(args.labels),
-        args.has_labels,
-    )
+    convert_dataset(args.dataset_path, args.output_path, args.has_labels)
 
 
 if __name__ == "__main__":

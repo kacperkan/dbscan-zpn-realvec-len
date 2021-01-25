@@ -85,7 +85,9 @@ void dump_experiment(const std::string name, const std::string file_path,
             out_file << "\n";
         }
 
-        unique_labels.emplace(point_stat_with_index.value().label);
+        if (point_stat_with_index.value().label != NOISE_LABEL) {
+            unique_labels.emplace(point_stat_with_index.value().label);
+        }
         total_calculations += point_stat_with_index.value().num_calculations;
         total_cluster_assignments +=
             point_stat_with_index.value().cluster_assignments.size();
