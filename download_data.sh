@@ -6,8 +6,6 @@ python python/produce_example_data.py data/example
 python python/make_dataset_zpn.py \
     data/example/data.arff \
     data/example/data_zpn.arff \
-    --thresholds -1 1 \
-    --labels -2 0 1 \
     --has_labels
 
 
@@ -30,20 +28,14 @@ echo "Making ZPN datasets ..."
 python python/make_dataset_zpn.py \
     data/complex9/data.arff \
     data/complex9/data_zpn.arff \
-    --thresholds 100 500 \
-    --labels -1 0 1 \
     --has_labels
 
 python python/make_dataset_zpn.py \
     data/cluto-t7-10k/data.arff \
     data/cluto-t7-10k/data_zpn.arff \
-    --thresholds 250 500 \
-    --labels -1 0 1 \
     --has_labels
 
 python python/make_dataset_zpn.py \
     data/letter/data.arff \
     data/letter/data_zpn.arff \
-    --thresholds 3 7 \
-    --labels -1 0 1 \
     --has_labels
