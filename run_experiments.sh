@@ -139,7 +139,6 @@ for eps in ${epsilons[@]}; do
     done
 done
 
-jupyter nbconvert python/analysis.ipynb --to html --no-input --no-prompt --output-dir experiments/ --execute
 
 for eps in ${epsilons[@]}; do
     for dataset in ${datasets[@]}; do
@@ -227,3 +226,5 @@ for eps in ${epsilons[@]}; do
 done
 
 echo "Report can be found in experiments/analysis.html"
+
+jupyter nbconvert python/analysis.ipynb --to html --no-input --no-prompt --output-dir experiments/ --execute
