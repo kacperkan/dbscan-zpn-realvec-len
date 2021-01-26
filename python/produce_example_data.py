@@ -901,7 +901,7 @@ def produce(out: str):
 
     X = []
     labels_true = []
-    for line in data:
+    for line in data.split("\n"):
         if len(line) == 0:
             continue
         x1, x2, label = line.split(",")
