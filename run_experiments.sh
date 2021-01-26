@@ -4,8 +4,8 @@
 basic_command_tanimoto="./dbscan_zpn_realvec_len \
     data/example/data.arff \
     sanity_experiment_tanimoto \
-    --eps 0.9 \
-    --min_pts 10 \
+    --eps 0.98 \
+    --min_pts 15 \
     --has_labels \
     --algorithm_name tanimoto \
     --prefiltering_name none
@@ -15,7 +15,7 @@ basic_command_base="./dbscan_zpn_realvec_len \
     data/example/data.arff \
     sanity_experiment_base \
     --eps 0.3 \
-    --min_pts 10 \
+    --min_pts 15 \
     --has_labels \
     --algorithm_name base \
     --prefiltering_name none
@@ -24,8 +24,8 @@ basic_command_base="./dbscan_zpn_realvec_len \
 basic_command_tanimoto_zpn="./dbscan_zpn_realvec_len \
     data/example/data_zpn.arff \
     sanity_experiment_tanimoto_zpn \
-    --eps 0.9 \
-    --min_pts 10 \
+    --eps 0.98 \
+    --min_pts 15 \
     --has_labels \
     --algorithm_name tanimoto \
     --prefiltering_name none
@@ -39,7 +39,7 @@ simpler_basic_command_tanimoto="./dbscan_zpn_realvec_len \
     data/example_simpler/data.arff \
     simpler_sanity_experiment_tanimoto \
     --eps 0.9 \
-    --min_pts 1 \
+    --min_pts 2 \
     --has_labels \
     --algorithm_name tanimoto \
     --prefiltering_name none
@@ -48,8 +48,8 @@ simpler_basic_command_tanimoto="./dbscan_zpn_realvec_len \
 simpler_basic_command_base="./dbscan_zpn_realvec_len \
     data/example_simpler/data.arff \
     simpler_sanity_experiment_base \
-    --eps 0.3 \
-    --min_pts 1 \
+    --eps 0.5 \
+    --min_pts 2 \
     --has_labels \
     --algorithm_name base \
     --prefiltering_name none

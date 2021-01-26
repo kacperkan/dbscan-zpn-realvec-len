@@ -885,6 +885,9 @@ def get_even_simpler_dataset() -> Tuple[np.ndarray, np.ndarray]:
         left_points.append((-1.0, y_coords[i]))
         right_points.append((1.0, y_coords[i]))
 
+    left_points.append((0.0, 1.0))
+    labels.append(2)
+
     return (
         np.concatenate(
             (np.array(left_points), np.array(right_points)), axis=0
